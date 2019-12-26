@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  EC2 Create AMI 
+  This Function kicked CloudWatch 
+Globals:
+    Function:
+        Timeout: 180
+
+Resources:
+    CreateAMIFunc:
+        Type: AWS::Serverless::Function 
+        Properties:
+            FunctionName: prod-CreateAMIFunc
+            CodeUri: src/
+            Handler: app.lambda_handler
+            Runtime: python3.8
+            Events:
+                Timer:
+                    Type: Schedule
+                    Properties:
+                        # 時間はUTC
+                        Schedule: cron(15 19 * * ? *)
+            AutoPublishAlias: v1
+            Environment:
+              Variables:
+                TZ: Asia/Tokyo
+            Policies:
+                - {
+                    "Version": "2012-10-17",
+                    "Statement":[
+                            {
+                                "Sid": "",
+                                "Effect": "Allow", 
+                                "Action":[ 
+                                    "ec2:*",
+                                ],
+                                "Resource": "*"
+                            }
+                        ]
+                    }
+            Tags:
+                runtype: prod
+Outputs:
+    CreateAMIFunc:
+      Description: "CreateAMIFunc ARN"
+      Value: !GetAtt CreateAMIFunc.Arn
