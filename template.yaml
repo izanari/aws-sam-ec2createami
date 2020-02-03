@@ -41,6 +41,14 @@ Resources:
                     }
             Tags:
                 runtype: prod
+            EventInvokeConfig:
+                MaximumEventAgeInSeconds: 300
+                MaximumRetryAttempts: 0
+                DestinationConfig:
+                    OnFailure:
+                        Type: SNS 
+                        Destination: arn:aws:sns:ap-northeast-1:722307337002:prod-lambda-destination
+
 Outputs:
     CreateAMIFunc:
       Description: "CreateAMIFunc ARN"
